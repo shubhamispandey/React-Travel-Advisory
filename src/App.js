@@ -9,6 +9,7 @@ import Map from "./components/Map/Map";
 
 function App() {
   const [clickedChild, setClickedChild] = useState(null);
+  const [filteredPlaces, setFilteredPlaces] = useState([]);
   const [places, setPlaces] = useState([]);
   const [coords, setCoords] = useState();
   const [bounds, setBounds] = useState(null);
@@ -26,6 +27,12 @@ function App() {
     );
   }, []);
 
+  // !Review filter
+  useEffect(() => {
+    const filteredPlaces = places.filter((place) => place.rating > rating);
+    setPlaces(filteredPlaces);
+  }, [rating]);
+
   // !Get new set of data from api on change of coordinates and bounds
   useEffect(() => {
     setIsLoading(true);
@@ -34,6 +41,7 @@ function App() {
       getPlacesData(type, bounds.sw, bounds.ne).then((data) => {
         console.log(data);
         setPlaces(data);
+        setFilteredPlaces([]);
         setIsLoading(false);
       });
     }
@@ -60,7 +68,7 @@ function App() {
             coordinates={coords}
             setBounds={setBounds}
             setCoordinates={setCoords}
-            places={places}
+            places={filteredPlaces.length ? filteredPlaces : places}
             setClickedChild={setClickedChild}
           />
         </Grid>
